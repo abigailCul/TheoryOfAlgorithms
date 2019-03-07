@@ -83,7 +83,10 @@ void sha256(){
 	//w .. 64 element array of 32 bit unsigned integers
 	//m .. 16 element array of 16 bit unsigned integers
 	//for looping
-	int t;
+	int i, t;
+
+	//loop through message block
+	for (i = 0; i< 1; i++){
 
 
 	// from page 22, W[t] = M[t] for 0<= t <= 15
@@ -92,7 +95,7 @@ void sha256(){
 
 	// from page 22, w[t]
 	for (t =16; t < 64; t++)
-		sig1(W[t-2] + W[t-2] + sig0(W[t-15]) + W[t-16]);
+		W[t] = sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
 	
 	//initialise a,b,c,d ,e as per step 2 page 19
 	a = H[0]; b = H[1]; c = H[2]; d = H[3];
@@ -100,7 +103,7 @@ void sha256(){
 
 	//step 3
 	for (t = 0; t < 64; t++) {
-		T1 = h + SIG1(e) + Ch(e,f,g)+ K[t] + W[t];
+		T1 = h + SIG1(e) + ch(e,f,g)+ K[t] + W[t];
 		T2 = SIG0(a) + Maj(a,b,c);
 		h = g;
 		g = f;
@@ -121,6 +124,7 @@ void sha256(){
 	H[5] = f + H[5];
 	H[6] = g + H[6];
 	H[7] = h + H[7];
+	}
 
 	printf("%x %x %x %x %x %x %x %x\n", H[0], H[1], H[2], H[3], H[4], H[5], H[6], H[7]);
 
