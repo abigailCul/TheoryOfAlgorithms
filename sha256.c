@@ -25,18 +25,7 @@ uint32_t ch(uint32_t x, uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
 
-
-int main(int argc, char *argv[]){
-
-	sha256();
-   return 0;
-}
-
-// return back the 256 bit message digest
-// an array of 32 bit integers
-void sha256(){
-
-	// The k  onstants
+// The k constants
 	uint32_t K[] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -55,6 +44,16 @@ void sha256(){
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 
 		0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 	};
+int main(int argc, char *argv[]){
+
+	sha256();
+   return 0;
+}
+
+// return back the 256 bit message digest
+// an array of 32 bit integers
+void sha256(){
+
 
 	// message schedule (6.2)
 	uint32_t W[64];
