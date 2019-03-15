@@ -5,7 +5,7 @@ union msgblock{
 	uint8_t e[64];
 	uint16_t t[16];
 	uint64_t s[8];
-}
+};
 
 int main(int argc, char *argv[]){
 
