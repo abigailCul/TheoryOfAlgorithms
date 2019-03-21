@@ -23,6 +23,9 @@ uint32_t Ch(uint32_t x,uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
 //The K Constants
+//32 bit words - hexidecimal numbers
+//cube roots of first 64 primes
+//
   uint32_t K[]={
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 
   0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 
@@ -60,7 +63,8 @@ void sha256(){
 
   // The hash Values come from section 5.3.3 of standard
   // H array . length 8 - 32 bit unsigned integers
-  // 
+  // first 32 bits of the fractional parts  
+  // sqr roots of first 8 prime numbers
   uint32_t H[8]={
       0x6a09e667
     , 0xbb67ae85
@@ -82,10 +86,14 @@ void sha256(){
 	  //first 16 elements of w
   for (t =0; t< 16; t++)
 
-
+   // First 16 elements of t get assigned to the 
+   // 16 elements of the current message block which is M
    W[t] = M[t];
 
   // 4.1.2 4.2.2 sig0 and sig1  
+  // loop through values of 16 
+  // remaining 48 elemts of w get assigned to sig1.. 
+  // up to and including 63
   for (t = 16; t < 64; t++)
    W[t] = sig1(W[t-2])+ W[t-7] + sig0(W[t-15]) + W[t-16];
 
