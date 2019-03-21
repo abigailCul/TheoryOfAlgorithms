@@ -51,14 +51,16 @@ int main(int argc, char *argv[]){
 
 void sha256(){
   
-  //Message schedule (Section 6.2)
+  //Message schedule (Section 6.2) - 64 in length 32 bit words
   uint32_t W[64];
-  //Working Variables (Section 6.2)
+  //Working Variables - Section 6.2 
   uint32_t a, b, c, d, e, f, g, h;
-  //Temparary Variables (Section 6.2)
+  //Temparary Variables - Section 6.2 
   uint32_t T1, T2;
 
   // The hash Values come from section 5.3.3 of standard
+  // H array . length 8 - 32 bit unsigned integers
+  // 
   uint32_t H[8]={
       0x6a09e667
     , 0xbb67ae85
@@ -70,21 +72,24 @@ void sha256(){
     , 0x5be0cd19
   };
 
-  //Message Block 
+  //Message Block 16 element array of 32 bit unsigned int
   uint32_t M[16]={0,0,0,0,0,0,0,0};
-  //from page 22, W[t] = M[t] for 0 <= t <=15.
+  //from page 22, W[t] = M[t] for 0 <= t <=15. 
   int i,t;
   // Loop Through the message block(page 22)
   for(i=0; i<1; i++){ 
 
-  for (t =0; t<16; t++)
+	  //first 16 elements of w
+  for (t =0; t< 16; t++)
+
 
    W[t] = M[t];
 
+  // 4.1.2 4.2.2 sig0 and sig1  
   for (t = 16; t < 64; t++)
    W[t] = sig1(W[t-2])+ W[t-7] + sig0(W[t-15]) + W[t-16];
 
-   // Initialise a,b, c, d and e as per Step 2, Section 6.2.2
+   // Initialise a,b, c, d and e as per Step 2, page 19 Section 6.2.2
    a = H[0]; b= H[1]; c = H[2]; d = H[3]; 
    e = H[4]; f= H[5]; g = H[6]; h= H[7];
 
@@ -94,7 +99,7 @@ void sha256(){
     T2 = SIG0(a) + Maj(a,b,c);
     h = g;
     g = f;
-    f =e;
+    f = e;
     e = d + T1;
     d = c;
     c = b;
@@ -115,7 +120,7 @@ void sha256(){
   printf("%x %x %x %x %x %x %x %x",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
  }
 uint32_t sig0(uint32_t x){
-  //See Section 3.2 & for definitions
+  //See Section 3.2 & NUMBER 4 for definitions
   return (rotr(7,x) ^ rotr(18, x) ^ shr(3,x));
 
 
