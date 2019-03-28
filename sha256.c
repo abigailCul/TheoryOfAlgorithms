@@ -62,11 +62,17 @@ int messageblock(File *f, union megblock *M, enum status *S, int *nobits);
 
 int main(int argc, char *argv[]){
 
+  // Open the file given as first command line argument
   FILE* f;
   f = fopen(argv[1], "r");
 
+  //Error checking
 
+
+  //run secure hash algorithm
   sha256(f);
+  //close the file
+  fclose(f);
 
   return 0;
 }
@@ -113,49 +119,50 @@ void sha256(FILE *f){
   while (messageblock(f, M, S, nobits)){ 
 
 	  //first 16 elements of w
-  for (t =0; t< 16; t++)
+  	for (t =0; t< 16; t++)
+  		// First 16 elements of t get assigned to the 
+ 	 	// 16 elements of the current message block which is M
+  		W[t] = M.t[t];
 
-   // First 16 elements of t get assigned to the 
-   // 16 elements of the current message block which is M
-   W[t] = M.t[t];
-
-  // 4.1.2 4.2.2 sig0 and sig1  
-  // loop through values of 16 
-  // remaining 48 elemts of w get assigned to sig1.. 
-  // up to and including 63
-  for (t = 16; t < 64; t++)
-   W[t] = sig1(W[t-2])+ W[t-7] + sig0(W[t-15]) + W[t-16];
+  	// 4.1.2 4.2.2 sig0 and sig1  
+  	// loop through values of 16 
+  	// remaining 48 elemts of w get assigned to sig1.. 
+  	// up to and including 63
+  	for (t = 16; t < 64; t++)
+   		W[t] = sig1(W[t-2])+ W[t-7] + sig0(W[t-15]) + W[t-16];
 
    // Initialise a,b, c, d and e as per Step 2, page 19 Section 6.2.2
-   a = H[0]; b= H[1]; c = H[2]; d = H[3]; 
-   e = H[4]; f= H[5]; g = H[6]; h= H[7];
+   	a = H[0]; b= H[1]; c = H[2]; d = H[3]; 
+   	e = H[4]; f= H[5]; g = H[6]; h= H[7];
 
-   // Step 3.
-   for (t =0; t < 64; t++){
-    T1 = h + SIG1(e) + Ch(e,f,g) + K[t] + W[t];
-    T2 = SIG0(a) + Maj(a,b,c);
-    h = g;
-    g = f;
-    f = e;
-    e = d + T1;
-    d = c;
-    c = b;
-    b = a;
-    a = T1 + T2;
-    }
+   	// Step 3.
+   	for (t =0; t < 64; t++){
+    		T1 = h + SIG1(e) + Ch(e,f,g) + K[t] + W[t];
+    		T2 = SIG0(a) + Maj(a,b,c);
+    		h = g;
+    		g = f;
+    		f = e;
+    		e = d + T1;
+    		d = c;
+		c = b;
+    		b = a;
+    		a = T1 + T2;
+    	}
 
-   //Step 4.
-   H[0] = a + H[0];
-   H[1] = b + H[1];
-   H[2] = c + H[2];
-   H[3] = d + H[3];
-   H[4] = e + H[4];
-   H[5] = f + H[5];
-   H[6] = g + H[6];
-   H[7] = h + H[7];
-  }
+   	//Step 4.
+   	H[0] = a + H[0];
+   	H[1] = b + H[1];
+   	H[2] = c + H[2];
+   	H[3] = d + H[3];
+   	H[4] = e + H[4];
+	H[5] = f + H[5];
+	H[6] = g + H[6];
+	H[7] = h + H[7];
+  	}
+
   printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
  }
+
 uint32_t sig0(uint32_t x){
   //See Section 3.2 & NUMBER 4 for definitions
   return (rotr(7,x) ^ rotr(18, x) ^ shr(3,x));
@@ -246,20 +253,17 @@ int messageblock(File *f, union megblock *M, enum status *S, int *nobits) {
 				M.e[nobytes] = 0x00;
 			}
 		}else if(feof(f)){
-			S = PAD1;
+			//Tell S that we need a message block with all the padding
+			*S = PAD1;
 		}
-		}
+		
 
 	//printf("%llu\n", nobytes);
 	//printf("%c\n", fread(&c, 1, 1, f));
 
-	fclose(f);
+	//fclose(f);
 
-/*	for(int i = 0; i < 64; i++)
-		//print all elemts of m as 64 individual bytes
-		printf("%x ", M.e[i]);
-		printf("\n");*/
-
+	// If we get this far return 1 so the function is called again
 	return 1;
 
 
