@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
+
 // message block
 union msgblock{
 	uint8_t e[64];
@@ -67,7 +68,17 @@ int main(int argc, char *argv[]){
   msgf = fopen(argv[1], "r");
 
   //Error checking
+  //
+ 
+	if(argc !=2){
+	  	printf("File can't open\n");
+		return 0;
+	}
 
+	if (!msgf) {
+		printf("No file exists..\n");
+		return 1;
+}
 
   //run secure hash algorithm
   sha256(msgf);
@@ -161,7 +172,8 @@ void sha256(FILE *msgf){
   	}
 
   printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
- }
+  
+}
 
 uint32_t sig0(uint32_t x){
   //See Section 3.2 & NUMBER 4 for definitions
