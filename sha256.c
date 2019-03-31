@@ -37,13 +37,14 @@ uint32_t SIG1(uint32_t x);
 uint32_t Ch(uint32_t x,uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
-int is_big_endian(void){
+//checks if your system is big endian or little endian
+int big_endian(void){
 	union{
 		uint32_t i;
 		char c[4];
 	} e = {0x01000000};
 
-	return e.c[0];
+	return e.c[0] ==1 ;
 
 }
 
@@ -53,8 +54,6 @@ int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
 //The K Constants
 //32 bit words - hexidecimal numbers
 //cube roots of first 64 primes
-//
-  
 
   uint32_t K[]={
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 
@@ -77,8 +76,9 @@ int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
 
 int main(int argc, char *argv[]){
 
+	// adapted from https://stackoverflow.com/questions/12791864/c-program-to-check-little-vs-big-endian
 	printf("This is %s-endian\n",
-			is_big_endian() ? "big" : "little");
+			big_endian() ? "big" : "little");
 
 
 
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
   msgf = fopen(argv[1], "r");
 
   //Error checking for files
- 
+  //if the file does not exist no file will open
 	if(argc !=2){
 	  	printf("File can't open\n");
 		return 0;
@@ -202,6 +202,7 @@ void sha256(FILE *msgf){
 
 	//printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
 
+	//Prints depending on system being big or little endian
 	if(BIG_ENDIAN){
 		printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
 	}else{
