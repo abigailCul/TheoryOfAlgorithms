@@ -5,8 +5,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define LITTLE_ENDIAN
-#define BIG_ENDIAN  
+#define SWAP_UINT32(x) (((x) & 0x0000FF00) << 8) | ((x) << 24)
+#define BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
+ 
 
 // message block
 union msgblock{
@@ -71,8 +72,7 @@ int main(int argc, char *argv[]){
   FILE* msgf;
   msgf = fopen(argv[1], "r");
 
-  //Error checking
-  //
+  //Error checking for files
  
 	if(argc !=2){
 	  	printf("File can't open\n");
@@ -175,7 +175,20 @@ void sha256(FILE *msgf){
 	H[7] = h + H[7];
   	}
 
-  printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
+	//Change from little endian to big endian
+	H[0] >> (24 - i *8) & 0x000000ff;
+	H[1] >> (24 - i *8) & 0x000000ff;
+	H[2] >> (24 - i *8) & 0x000000ff;
+	H[3] >> (24 - i *8) & 0x000000ff;
+	H[4] >> (24 - i *8) & 0x000000ff;
+	H[5] >> (24 - i *8) & 0x000000ff;
+	H[6] >> (24 - i *8) & 0x000000ff;
+	H[7] >> (24 - i *8) & 0x000000ff;
+
+
+	printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
+
+		
   
 }
 
