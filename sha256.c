@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
+#define LittleToBig(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
 #define BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
  
@@ -38,6 +38,8 @@ uint32_t Ch(uint32_t x,uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
 //checks if your system is big endian or little endian
+//Little endian - the last byte of binary representation of the mulyi-byte data is stroed first
+//Big endian the first byte is stored
 int big_endian(void){
 	union{
 		uint32_t i;
