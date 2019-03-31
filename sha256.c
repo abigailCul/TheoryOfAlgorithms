@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-
 #define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
+
 #define BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
  
 
@@ -37,6 +37,15 @@ uint32_t SIG1(uint32_t x);
 uint32_t Ch(uint32_t x,uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
+int is_big_endian(void){
+	union{
+		uint32_t i;
+		char c[4];
+	} e = {0x01000000};
+
+	return e.c[0];
+
+}
 
 //retrieve next message block
 int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits);
@@ -67,6 +76,11 @@ int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
   };
 
 int main(int argc, char *argv[]){
+
+	printf("This is %s-endian\n",
+			is_big_endian() ? "big" : "little");
+
+
 
   // Open the file given as first command line argument
   FILE* msgf;
@@ -176,6 +190,8 @@ void sha256(FILE *msgf){
   	}
 
 	//Change from little endian to big endian
+	// The algorithm uses little endian byte ordering and SHA uses big endian
+	// Outputs the hash
 	H[1] >> (24 - i *8) & 0x000000ff;
 	H[2] >> (24 - i *8) & 0x000000ff;
 	H[3] >> (24 - i *8) & 0x000000ff;
@@ -184,12 +200,13 @@ void sha256(FILE *msgf){
 	H[6] >> (24 - i *8) & 0x000000ff;
 	H[7] >> (24 - i *8) & 0x000000ff;
 
+	//printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
 
-	printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
-
-/*	if(BIG_ENDIAN){
+	if(BIG_ENDIAN){
 		printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
-	}		
+	}else{
+	printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
+	  }	 
   
 }
 
