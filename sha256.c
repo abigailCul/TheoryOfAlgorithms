@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define SWAP_UINT32(x) (((x) & 0x0000FF00) << 8) | ((x) << 24)
+#define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 #define BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
  
 
@@ -176,7 +176,6 @@ void sha256(FILE *msgf){
   	}
 
 	//Change from little endian to big endian
-	H[0] >> (24 - i *8) & 0x000000ff;
 	H[1] >> (24 - i *8) & 0x000000ff;
 	H[2] >> (24 - i *8) & 0x000000ff;
 	H[3] >> (24 - i *8) & 0x000000ff;
@@ -188,7 +187,9 @@ void sha256(FILE *msgf){
 
 	printf("%x %x %x %x %x %x %x %x\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
 
-		
+/*	if(BIG_ENDIAN){
+		printf("%08x %08x %08x %08x %08x %08x %08x %08x\n\n",H[0], H[1],H[2],H[3], H[4], H[5], H[6],  H[7]);
+	}		
   
 }
 
@@ -254,11 +255,8 @@ int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
 		//Keep the loop in sha256 going for one more iteration
 		return 1;
 	}
-
-
-//	while (S == READ){
 	
-		//if we get down here we havent finished reading the file (S ==== read)
+	//if we get down here we havent finished reading the file (S ==== read)
 	nobytes = fread(M->e, 1, 64, msgf);
 	//Keep track of the number of bytes we've read
 	*nobits = *nobits + (nobytes *8);
@@ -287,12 +285,6 @@ int messageblock(FILE *msgf, union msgblock *M, enum status *S, uint64_t *nobits
 			*S = PAD1;
 		}
 		
-
-	//printf("%llu\n", nobytes);
-	//printf("%c\n", fread(&c, 1, 1, f));
-
-	//fclose(f);
-
 	// If we get this far return 1 so the function is called again
 	return 1;
 
